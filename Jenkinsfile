@@ -61,15 +61,6 @@ spec:
         - configMapRef:
             name: pactbroker-config
             optional: true
-<<<<<<< HEAD
-        - configMapRef:
-            name: sonarqube-config
-            optional: true
-        - secretRef:
-            name: sonarqube-access
-            optional: true
-=======
->>>>>>> 492-sonarqube-jenkins
       env:
         - name: HOME
           value: ${workingDir}
@@ -175,8 +166,6 @@ spec:
         - secretRef:
             name: git-credentials
             optional: true
-<<<<<<< HEAD
-=======
     - name: sonarqube-cli
       image: docker.io/sonarsource/sonar-scanner-cli:4.4
       tty: true
@@ -189,7 +178,6 @@ spec:
         - secretRef:
             name: sonarqube-access
             optional: true
->>>>>>> 492-sonarqube-jenkins
 """
 ) {
     node(buildLabel) {
@@ -216,20 +204,6 @@ spec:
                     npm run pact:verify --if-present
                 '''
             }
-<<<<<<< HEAD
-            stage('Sonar scan') {
-                sh '''#!/bin/bash
-
-                if [[ -z "${SONARQUBE_URL}" ]]; then
-                  echo "Skipping Sonar Qube step as Sonar Qube not installed or configured"
-                  exit 0
-                fi
-
-                npm run sonarqube:scan --if-present
-                '''
-            }
-            stage('Tag release') {
-=======
         }
         container(name: 'sonarqube-cli', shell: '/bin/bash') {
             stage('Sonar scan') {
@@ -253,7 +227,6 @@ spec:
             }
         }
         container(name: 'node', shell: '/bin/bash') {
->>>>>>> 492-sonarqube-jenkins
                 sh '''#!/bin/bash
                     set -x
                     set -e
@@ -312,10 +285,6 @@ spec:
 
                     cat ./env-config
                 '''
-<<<<<<< HEAD
-            }
-=======
->>>>>>> 492-sonarqube-jenkins
         }
         container(name: 'buildah', shell: '/bin/bash') {
             stage('Build image') {
