@@ -61,12 +61,15 @@ spec:
         - configMapRef:
             name: pactbroker-config
             optional: true
+<<<<<<< HEAD
         - configMapRef:
             name: sonarqube-config
             optional: true
         - secretRef:
             name: sonarqube-access
             optional: true
+=======
+>>>>>>> 492-sonarqube-jenkins
       env:
         - name: HOME
           value: ${workingDir}
@@ -172,6 +175,21 @@ spec:
         - secretRef:
             name: git-credentials
             optional: true
+<<<<<<< HEAD
+=======
+    - name: sonarqube-cli
+      image: docker.io/sonarsource/sonar-scanner-cli:4.4
+      tty: true
+      command: ["/bin/bash"]
+      workingDir: ${workingDir}
+      envFrom:
+        - configMapRef:
+            name: sonarqube-config
+            optional: true
+        - secretRef:
+            name: sonarqube-access
+            optional: true
+>>>>>>> 492-sonarqube-jenkins
 """
 ) {
     node(buildLabel) {
@@ -198,6 +216,7 @@ spec:
                     npm run pact:verify --if-present
                 '''
             }
+<<<<<<< HEAD
             stage('Sonar scan') {
                 sh '''#!/bin/bash
 
@@ -210,6 +229,31 @@ spec:
                 '''
             }
             stage('Tag release') {
+=======
+        }
+        container(name: 'sonarqube-cli', shell: '/bin/bash') {
+            stage('Sonar scan') {
+                sh '''#!/bin/bash
+
+                if ! command -v sonar-scanner &> /dev/null
+                then
+                    echo "Skipping SonarQube step, no task defined"
+                    exit 0
+                fi
+
+                if [ -n "${SONARQUBE_URL}" ]; then
+                  sonar-scanner \
+                    -Dsonar.login=${SONARQUBE_USER} \
+                    -Dsonar.password=${SONARQUBE_PASSWORD} \
+                    -Dsonar.host.url=${SONARQUBE_URL} 
+                else 
+                    echo "Skipping Sonar Qube step"
+                fi
+                '''
+            }
+        }
+        container(name: 'node', shell: '/bin/bash') {
+>>>>>>> 492-sonarqube-jenkins
                 sh '''#!/bin/bash
                     set -x
                     set -e
@@ -268,7 +312,10 @@ spec:
 
                     cat ./env-config
                 '''
+<<<<<<< HEAD
             }
+=======
+>>>>>>> 492-sonarqube-jenkins
         }
         container(name: 'buildah', shell: '/bin/bash') {
             stage('Build image') {
